@@ -212,6 +212,8 @@ class UserController {
         this.tableEl.appendChild(tr);
 
         this.updateCount();
+        
+        
 
     }
 
@@ -227,19 +229,18 @@ class UserController {
 
                 let field = this.formUpdateEl.querySelector("[name =" + name.replace("_", "") + "]");
 
-                if (field && field !== null){
-                    console.log(field);
+                if (field){
+
                     switch (field.type) {
 
                         case 'file':
-                            continue;
-                            break;
+                        continue;
+                        break;
 
                         case 'radio':
                             field = this.formUpdateEl.querySelector("[name=" + name.replace("_", "") + "][value=" + json[name] + "]");
-                            console.log(field);
                             field.checked = true;
-                            break;
+                        break;
 
                         case 'checkbox':
                             field.checked = json[name];
@@ -253,15 +254,11 @@ class UserController {
                 }    
             }
 
-            this.formUpdateEl.querySelector(".photo").src = json_photo;
-
-
             this.showPanelUpdate();
-            
 
         });
 
-
+       
     }
 
     showPanelCreate(){
@@ -270,13 +267,14 @@ class UserController {
         document.querySelector("#box-user-update").style.display = "none";
 
     }
-
+        
     showPanelUpdate(){
 
         document.querySelector("#box-user-create").style.display = "none";
         document.querySelector("#box-user-update").style.display = "block";
 
     }
+    
 
     updateCount(){
 
