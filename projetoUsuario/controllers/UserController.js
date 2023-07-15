@@ -151,7 +151,7 @@ class UserController {
             if(field.name == "gender"){
     
                 if(field.checked){
-    
+                        
                     user[field.name] = field.value;
     
                 }
@@ -238,8 +238,8 @@ class UserController {
                         break;
 
                         case 'radio':
-                            field = this.formUpdateEl.querySelector("[name=" + name.replace("_", "") + "][value=" + json[name] + "]");
-                            field.checked = true;
+                            field.checked = field._gender === "M" ? true : false;
+                            
                         break;
 
                         case 'checkbox':
@@ -261,19 +261,56 @@ class UserController {
        
     }
 
-    showPanelCreate(){
+    /*addEventTr(tr) {
+        tr.querySelector(".btn-edit").addEventListener("click", e => {
+            let json = JSON.parse(tr.dataset.user);
+            this.formUpdateEl.dataset.trIndex = tr.sectionRowIndex;
 
-        document.querySelector("#box-user-create").style.display = "block";
-        document.querySelector("#box-user-update").style.display = "none";
+            for (let name in json) {
+                if (json.hasOwnProperty(name)) {
+                    let field = this.formUpdateEl.querySelector(`[name="${name.replace("_", "")}"]`);
 
-    }
-        
+                    if (field) {
+                        switch (field.type) {
+                            case 'file':
+                                continue;
+                            case 'radio':
+                                field.checked = json._gender === true ? true : false;
+                                if(json._gender) {
+                                    console.log(field);
+                                    this.formUpdateEl.getElementById('exampleInputGenderM').checked = true;
+                                } else {
+                                    this.formUpdateEl.getElementById('exampleInputGenderF').checked = true;
+                                }
+                                break;
+                            case 'checkbox':
+                                field.checked = json[name];
+                                break;
+                            default:
+                                field.value = json[name];
+                        }
+                    }
+                }
+            }
+
+            this.showPanelUpdate();
+        });
+    }*/
+
     showPanelUpdate(){
 
         document.querySelector("#box-user-create").style.display = "none";
         document.querySelector("#box-user-update").style.display = "block";
 
     }
+    showPanelCreate(){
+
+        document.querySelector("#box-user-create").style.display = "none";
+        document.querySelector("#box-user-update").style.display = "none";
+
+    }
+        
+    
     
 
     updateCount(){
