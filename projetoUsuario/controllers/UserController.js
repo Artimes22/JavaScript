@@ -238,7 +238,7 @@ class UserController {
                         break;
 
                         case 'radio':
-                            field.checked = field._gender === "M" ? true : false;
+                            field.checked = true;
                             
                         break;
 
