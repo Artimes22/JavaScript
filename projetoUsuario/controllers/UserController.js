@@ -1,6 +1,6 @@
 class UserController {
 
-    constructor(formIdCreate, formIdUpdate, tableId){
+    constructor(formIdCreate, formIdUpdate, tableId) {
 
         this.formEl = document.getElementById(formIdCreate);
         this.formUpdateEl = document.getElementById(formIdUpdate);
@@ -8,18 +8,18 @@ class UserController {
 
         this.onSubmit();
         this.onEdit();
-        
+
     }
 
-    onEdit(){
+    onEdit() {
 
-        document.querySelector("#box-user-update .btn-cancel").addEventListener("click", e=>{
-
+        document.querySelector("#box-user-update .btn-cancel").addEventListener("click", e => {
+            
             this.showPanelCreate();
 
         });
 
-        this.formUpdateEl.addEventListener("submit", event=>{
+        this.formUpdateEl.addEventListener("submit", event => {
 
             event.preventDefault();
 
@@ -49,16 +49,16 @@ class UserController {
         
         `;
 
-        this.addEventTr(tr);
+            this.addEventTr(tr);
 
-        this.updateCount();
+            this.updateCount();
 
 
         });
 
     }
 
-    onSubmit(){
+    onSubmit() {
 
         this.formEl.addEventListener("submit", event => {
 
@@ -70,7 +70,8 @@ class UserController {
 
             let values = this.getValues(this.formEl);
 
-            if(!values) return false;
+
+            if (!values) return false;
 
             this.getPhoto().then(
                 (content) => {
@@ -83,63 +84,63 @@ class UserController {
 
                     btn.disabled = false;
 
-                }, 
+                },
                 (e) => {
 
                     console.error(e);
 
                 }
-            );  
-                        
+            );
+
         });
 
     }
 
-    getPhoto(){
+    getPhoto() {
 
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
 
             let fileReader = new FileReader();
 
-            let elements = [...this.formEl.elements].filter(item=>{
+            let elements = [...this.formEl.elements].filter(item => {
 
-                if (item.name === "photo"){
+                if (item.name === "photo") {
                     return item;
                 }
             });
 
             let file = elements[0].files[0];
 
-            fileReader.onload = () =>{
+            fileReader.onload = () => {
 
                 resolve(fileReader.result);
 
             };
 
-            fileReader.onerror = (e)=>{
+            fileReader.onerror = (e) => {
 
                 reject(e);
 
             };
 
-            if(file){
+            if (file) {
 
                 fileReader.readAsDataURL(file);
 
-            }else{
+            } else {
                 resolve('dist/img/boxed-bg.jpg');
-            }    
+            }
 
         });
     };
 
-    getValues(formEl){
+    getValues(formEl) {
 
         let user = {};
 
         let isValid = true;
 
-        [...formEl.elements].forEach(function(field, index){
+        [...formEl.elements].forEach(function (field, index) {
 
             if (['name', 'email', 'password'].indexOf(field.name) > -1 && !field.value) {
 
@@ -148,45 +149,42 @@ class UserController {
 
             }
 
-            if(field.name == "gender"){
-    
-                if(field.checked){
-                        
+            if (field.name == "gender") {
+                if (field.checked) {
                     user[field.name] = field.value;
-    
                 }
-    
-            }else if(field.name === 'admin'){
+
+            } else if (field.name === 'admin') {
 
                 user[field.name] = field.checked;
 
-            }else{
-    
-            user[field.name] = field.value;
-    
+            } else {
+
+                user[field.name] = field.value;
+
             }
-    
+
         });
 
-        if (!isValid){
+        if (!isValid) {
 
             return false;
 
         }
-    
+
         return new User(
-            user.name, 
-            user.gender, 
-            user.birth, 
-            user.country, 
-            user.email, 
-            user.password, 
-            user.photo, 
+            user.name,
+            user.gender,
+            user.birth,
+            user.country,
+            user.email,
+            user.password,
+            user.photo,
             user.admin
-            );
+        );
     }
 
-    addLine(dataUser){
+    addLine(dataUser) {
 
         let tr = document.createElement('tr');
 
@@ -207,19 +205,19 @@ class UserController {
         `;
 
         this.addEventTr(tr);
-        
+
 
         this.tableEl.appendChild(tr);
 
         this.updateCount();
-        
-        
+
+
 
     }
 
-    addEventTr(tr){
+    addEventTr(tr) {
 
-        tr.querySelector(".btn-edit").addEventListener("click", e=>{
+        tr.querySelector(".btn-edit").addEventListener("click", e => {
 
             let json = JSON.parse(tr.dataset.user);
 
@@ -229,91 +227,57 @@ class UserController {
 
                 let field = this.formUpdateEl.querySelector("[name =" + name.replace("_", "") + "]");
 
-                if (field){
+                if (field) {
 
                     switch (field.type) {
 
                         case 'file':
-                        continue;
-                        break;
+                            continue;
+                            break;
 
                         case 'radio':
+                            field = this.formUpdateEl.querySelector("[name=" + name.replace("_", "") + "][value=" + json[name] + "]");
                             field.checked = true;
-                            
-                        break;
+                            // if (json._gender === true) {
+                            //     window.document.getElementById("exampleInputGenderM").checked = true;
+                            //     window.document.getElementById("exampleInputGenderF").checked = false;
+                            // } else {
+                            //     window.document.getElementById("exampleInputGenderF").checked = true;
+                            //     window.document.getElementById("exampleInputGenderM").checked = false;
+                            // }
+                            break;
 
                         case 'checkbox':
                             field.checked = json[name];
-                        break;
+                            break;
 
                         default:
                             field.value = json[name];
 
-                    }                    
-
-                }    
-            }
-
-            this.showPanelUpdate();
-
-        });
-
-       
-    }
-
-    /*addEventTr(tr) {
-        tr.querySelector(".btn-edit").addEventListener("click", e => {
-            let json = JSON.parse(tr.dataset.user);
-            this.formUpdateEl.dataset.trIndex = tr.sectionRowIndex;
-
-            for (let name in json) {
-                if (json.hasOwnProperty(name)) {
-                    let field = this.formUpdateEl.querySelector(`[name="${name.replace("_", "")}"]`);
-
-                    if (field) {
-                        switch (field.type) {
-                            case 'file':
-                                continue;
-                            case 'radio':
-                                field.checked = json._gender === true ? true : false;
-                                if(json._gender) {
-                                    console.log(field);
-                                    this.formUpdateEl.getElementById('exampleInputGenderM').checked = true;
-                                } else {
-                                    this.formUpdateEl.getElementById('exampleInputGenderF').checked = true;
-                                }
-                                break;
-                            case 'checkbox':
-                                field.checked = json[name];
-                                break;
-                            default:
-                                field.value = json[name];
-                        }
                     }
+
                 }
             }
 
             this.showPanelUpdate();
+
         });
-    }*/
 
-    showPanelUpdate(){
-
-        document.querySelector("#box-user-create").style.display = "none";
-        document.querySelector("#box-user-update").style.display = "block";
 
     }
-    showPanelCreate(){
 
-        document.querySelector("#box-user-create").style.display = "none";
-        document.querySelector("#box-user-update").style.display = "none";
 
+    showPanelUpdate() {
+        document.querySelector("#box-user-create").style = "display: none";
+        document.querySelector("#box-user-update").style = "display: block";
     }
-        
-    
-    
 
-    updateCount(){
+    showPanelCreate() {
+        document.querySelector("#box-user-create").style = "display: block";
+        document.querySelector("#box-user-update").style = "display: none";
+    }
+
+    updateCount() {
 
         let numberUsers = 0;
         let numberAdmin = 0;
@@ -334,12 +298,3 @@ class UserController {
     }
 
 }
-
-
-
-
-
-
-
-
-
