@@ -14,7 +14,7 @@ class UserController {
     onEdit() {
 
         document.querySelector("#box-user-update .btn-cancel").addEventListener("click", e => {
-            
+
             this.showPanelCreate();
 
         });
@@ -33,26 +33,52 @@ class UserController {
 
             let tr = this.tableEl.rows[index];
 
-            tr.dataset.user = JSON.stringify(values);
+            let userOld = JSON.parse(tr.dataset.user);
 
-            tr.innerHTML = `
+            let result = Object.assign({}, userOld, values)
+
+            this.getPhoto(this.formUpdadteEl).then(
+                (content) => {
+
+                    if (!values.photo){
+                         result._photo = userOld._photo;
+                    }else{
+                        result._photo = content;
+                    }
+
+                    tr.dataset.user = JSON.stringify(result);
+
+                    tr.innerHTML = `
             
-            <td><img src="${values.photo}" alt="User Image" class="img-circle img-sm"></td>
-            <td>${values.name}</td>
-            <td>${values.email}</td>
-            <td>${(values.admin) ? 'sim' : 'não' }</td>
-            <td>${Utils.dateFormat(values.register)}</td>
-            <td>
-                <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
-                <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
-            </td>
-        
-        `;
+                        <td><img src="${result._photo}" alt="User Image" class="img-circle img-sm"></td>
+                        <td>${result._name}</td>
+                        <td>${result._email}</td>
+                        <td>${(result._admin) ? 'sim' : 'não' }</td>
+                        <td>${Utils.dateFormat(result._register)}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
+                            <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
+                        </td>
 
-            this.addEventTr(tr);
+                    `
+                    this.addEventTr(tr);
 
-            this.updateCount();
+                    this.updateCount();
 
+                    this.formUpdateEl.reset();
+
+                    btn.disabled = false;
+
+                    this.showPanelCreate();
+                
+                },
+                (e) => {
+
+                    console.error(e);
+
+                }
+            );
+            
 
         });
 
@@ -73,7 +99,7 @@ class UserController {
 
             if (!values) return false;
 
-            this.getPhoto().then(
+            this.getPhoto(this.formEl).then(
                 (content) => {
 
                     values.photo = content;
@@ -96,16 +122,17 @@ class UserController {
 
     }
 
-    getPhoto() {
+    getPhoto(formEl) {
 
         return new Promise((resolve, reject) => {
 
             let fileReader = new FileReader();
 
-            let elements = [...this.formEl.elements].filter(item => {
-
+            let elements = [...formEl.elements].filter(item => {
+                console.log(elements);
                 if (item.name === "photo") {
                     return item;
+                    
                 }
             });
 
