@@ -1,29 +1,12 @@
 const express = require('express');
+let routesIndex = require('./routes/index.js');
+let routesUsers = require('./routes/users.js');
 
 let app = express();
 
-app.get('/', (req, res) =>{
+app.use(routesIndex);
+app.use('/users', routesUsers);
 
-    res.statusCode = 200;
-    res.setHeader('content-Type', 'text/html');
-    res.end('<h1>Olá</h1>')
-
-});
-
-app.get('/users', (req, res) =>{
-
-    res.statusCode = 200;
-    res.setHeader('content-Type', 'application/json');
-    res.json({
-        users: [{
-        name: 'Artimes',
-        email: 'artimes.flima@gmail.com',
-        id: 1
-
-        }]
-    });
-
-});
 
 app.listen(3000, '127.0.0.1', ()=>{
 
