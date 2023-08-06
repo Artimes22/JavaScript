@@ -1,12 +1,9 @@
 const express = require('express');
-let routesIndex = require('./routes/index.js');
-let routesUsers = require('./routes/users.js');
+const consing = require('consign');
 
 let app = express();
 
-app.use(routesIndex);
-app.use('/users', routesUsers);
-
+consing().include('routes').into(app);
 
 app.listen(3000, '127.0.0.1', ()=>{
 
