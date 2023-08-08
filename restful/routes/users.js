@@ -9,29 +9,42 @@ module.exports = (app) => {
 
     app.get('/users', (req, res) => {
 
-        res.statusCode = 200;
-        res.setHeader('content-Type', 'application/json');
-        res.json({
-            users: [{
-                name: 'Artimes',
-                email: 'artimes.flima@gmail.com',
-                id: 1
+        db.find({}).sort({
+            name: 1
+        }).exec((err, users) => {
 
-            }]
+            if (err) {
+
+                console.log(`ERROR: ${err}`);
+                res.status(400).json({
+                    error: err
+                })
+            } else {
+
+                res.statusCode = 200;
+                res.setHeader('content-Type', 'application/json');
+                res.json({
+                    users
+                });
+
+            }
+
         });
+
+
 
     });
 
     app.post('/users', (req, res) => {
 
-        db.insert(req.body, (err, user)=>{
-        
-            if(err) {
+        db.insert(req.body, (err, user) => {
+
+            if (err) {
                 console.log(`ERROR: ${err}`);
                 res.status(400).json({
                     error: err
                 })
-            } else{
+            } else {
 
                 res.status(200).json(user)
             }
