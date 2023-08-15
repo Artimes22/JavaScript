@@ -5,7 +5,7 @@ var router = express.Router();
 
 var client = restify.creareJsonClient({
   url: 'http://localhost:4000'
-})
+});
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
