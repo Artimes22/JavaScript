@@ -1,11 +1,11 @@
-var express = require('express');
-var assert = require('assert');
-var restify = require('restify-clients');
-var router = express.Router();
+let express = require('express');
+let assert = require('assert');
+let restify = require('restify-clients');
+let router = express.Router();
 
 // Creates a JSON client
-var client = restify.createJsonClient({
-  url: 'http://localhost:4000'
+let client = restify.createJsonClient({
+  url: 'http://localhost:4000/users'
 });
 
 /* GET users listing. */
