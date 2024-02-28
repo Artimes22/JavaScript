@@ -1,3 +1,5 @@
+const { json } = require("express");
+
 class User {
 
     constructor(name, gender, birth, country, email, password, photo, admin){
@@ -69,7 +71,7 @@ class User {
                     this[name] = new Date(json[name]);
                 break;
                 default:
-                    this[name] = json[name];
+                    if (name.substring(0, 1) === '_') this[name] = json[name];
 
             }
             
@@ -80,77 +82,59 @@ class User {
 
     static getUsersStorage() {
 
-        let users = [];
-
-        if (localStorage.getItem("users")) {
-
-            users = JSON.parse(localStorage.getItem("users"));
-
-        }
-
-        return users;
+        return HttpRequest.get(`/users`);
 
     }
 
-    getNewID(){
+    toJSON(){
 
-        let usersID = parseInt(localStorage.getItem("usersID"));
+        Object.keys(this).forEach(key => {
 
-        if (!usersID > 0) usersID = 0;
+            if (this[key] !== undefined) json[key] = this[key];
 
-        usersID++;
+        });
 
-        localStorage.setItem("usersID", usersID);
-
-        return usersID;
+        return json;
 
     }
 
     save(){
 
-        let users = User.getUsersStorage();
+        return new Promise((resolve, reject) =>{
 
-        if (this.id > 0) {
+            let promise;
+
+                if (this.id) {
             
-            users.map(u=>{
+                    promise = HttpRequest.put(`/users/${this.id}`, this.toJSON());
+            
+                } else {
 
-                if (u._id == this.id) {
-
-                    Object.assign(u, this);
+                    promise = HttpRequest.post(`/users`, this.toJSON());
 
                 }
 
-                return u;
+                promise.then(data => {
 
-            });
+                    this.loadFromJSON(data);
 
-        } else {
+                    resolve(this);
 
-            this._id = this.getNewID();
+                }).catch(e=> {
 
-            users.push(this);
+                    reject(e);
 
-        }
+                });
 
-        localStorage.setItem("users", JSON.stringify(users));
+        });
+
+        
 
     }
 
     remove(){
 
-        let users = User.getUsersStorage();
-
-        users.forEach((userData, index)=>{
-
-            if (this._id == userData._id) {
-
-                users.splice(index, 1);
-
-            }
-
-        });
-
-        localStorage.setItem("users", JSON.stringify(users));
+        return HttpRequest.delete(`/users/${this.id}`);
 
     }
 
